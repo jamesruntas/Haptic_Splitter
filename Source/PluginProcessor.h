@@ -236,12 +236,12 @@ inline auto makeHighCutFilter(const ChainSettings& chainSettings, double sampleR
 //==============================================================================
 /**
 */
-class SimpleEQAudioProcessor  : public juce::AudioProcessor
+class HapticSplitter  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
-    SimpleEQAudioProcessor();
-    ~SimpleEQAudioProcessor() override;
+    HapticSplitter();
+    ~HapticSplitter() override;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -297,5 +297,5 @@ private:
     
     juce::dsp::Oscillator<float> osc;
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleEQAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HapticSplitter)
 };

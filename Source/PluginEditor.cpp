@@ -227,7 +227,7 @@ juce::String RotarySliderWithLabels::getDisplayString() const
     return str;
 }
 //==============================================================================
-ResponseCurveComponent::ResponseCurveComponent(SimpleEQAudioProcessor& p) :
+ResponseCurveComponent::ResponseCurveComponent(HapticSplitter& p) :
 audioProcessor(p),
 leftPathProducer(audioProcessor.leftChannelFifo),
 rightPathProducer(audioProcessor.rightChannelFifo)
@@ -623,7 +623,7 @@ juce::Rectangle<int> ResponseCurveComponent::getAnalysisArea()
     return bounds;
 }
 //==============================================================================
-SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcessor& p)
+HapticSplitterEditor::HapticSplitterEditor (HapticSplitter& p)
     : AudioProcessorEditor (&p), audioProcessor (p),
 peakFreqSlider(*audioProcessor.apvts.getParameter("Peak Freq"), "Hz"),
 peakGainSlider(*audioProcessor.apvts.getParameter("Peak Gain"), "dB"),
@@ -680,7 +680,7 @@ analyzerEnabledButtonAttachment(audioProcessor.apvts, "Analyzer Enabled", analyz
 
     analyzerEnabledButton.setLookAndFeel(&lnf);
     
-    auto safePtr = juce::Component::SafePointer<SimpleEQAudioProcessorEditor>(this);
+    auto safePtr = juce::Component::SafePointer<HapticSplitterEditor>(this);
     peakBypassButton.onClick = [safePtr]()
     {
         if( auto* comp = safePtr.getComponent() )
@@ -728,7 +728,7 @@ analyzerEnabledButtonAttachment(audioProcessor.apvts, "Analyzer Enabled", analyz
     setSize (480, 500);
 }
 
-SimpleEQAudioProcessorEditor::~SimpleEQAudioProcessorEditor()
+HapticSplitterEditor::~HapticSplitterEditor()
 {
     peakBypassButton.setLookAndFeel(nullptr);
     highcutBypassButton.setLookAndFeel(nullptr);
@@ -738,7 +738,7 @@ SimpleEQAudioProcessorEditor::~SimpleEQAudioProcessorEditor()
 }
 
 //==============================================================================
-void SimpleEQAudioProcessorEditor::paint(juce::Graphics &g)
+void HapticSplitterEditor::paint(juce::Graphics &g)
 {
     using namespace juce;
     
@@ -794,7 +794,7 @@ void SimpleEQAudioProcessorEditor::paint(juce::Graphics &g)
     g.drawFittedText("Build: " + buildDate + "\n" + buildTime, highCutSlopeSlider.getBounds().withY(6), Justification::topRight, 2);
 }
 
-void SimpleEQAudioProcessorEditor::resized()
+void HapticSplitterEditor::resized()
 {
     auto bounds = getLocalBounds();
     bounds.removeFromTop(4);
@@ -833,7 +833,7 @@ void SimpleEQAudioProcessorEditor::resized()
     peakQualitySlider.setBounds(bounds);
 }
 
-std::vector<juce::Component*> SimpleEQAudioProcessorEditor::getComps()
+std::vector<juce::Component*> HapticSplitterEditor::getComps()
 {
     return
     {

@@ -217,7 +217,7 @@ private:
 
 struct PathProducer
 {
-    PathProducer(SingleChannelSampleFifo<SimpleEQAudioProcessor::BlockType>& scsf) :
+    PathProducer(SingleChannelSampleFifo<HapticSplitter::BlockType>& scsf) :
     leftChannelFifo(&scsf)
     {
         leftChannelFFTDataGenerator.changeOrder(FFTOrder::order2048);
@@ -226,7 +226,7 @@ struct PathProducer
     void process(juce::Rectangle<float> fftBounds, double sampleRate);
     juce::Path getPath() { return leftChannelFFTPath; }
 private:
-    SingleChannelSampleFifo<SimpleEQAudioProcessor::BlockType>* leftChannelFifo;
+    SingleChannelSampleFifo<HapticSplitter::BlockType>* leftChannelFifo;
     
     juce::AudioBuffer<float> monoBuffer;
     
@@ -241,7 +241,7 @@ struct ResponseCurveComponent: juce::Component,
 juce::AudioProcessorParameter::Listener,
 juce::Timer
 {
-    ResponseCurveComponent(SimpleEQAudioProcessor&);
+    ResponseCurveComponent(HapticSplitter&);
     ~ResponseCurveComponent();
     
     void parameterValueChanged (int parameterIndex, float newValue) override;
@@ -258,7 +258,7 @@ juce::Timer
         shouldShowFFTAnalysis = enabled;
     }
 private:
-    SimpleEQAudioProcessor& audioProcessor;
+    HapticSplitter& audioProcessor;
 
     bool shouldShowFFTAnalysis = true;
 
@@ -313,11 +313,11 @@ struct AnalyzerButton : juce::ToggleButton
 };
 /**
 */
-class SimpleEQAudioProcessorEditor  : public juce::AudioProcessorEditor
+class HapticSplitterEditor  : public juce::AudioProcessorEditor
 {
 public:
-    SimpleEQAudioProcessorEditor (SimpleEQAudioProcessor&);
-    ~SimpleEQAudioProcessorEditor() override;
+    HapticSplitterEditor (HapticSplitter&);
+    ~HapticSplitterEditor() override;
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -326,7 +326,7 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    SimpleEQAudioProcessor& audioProcessor;
+    HapticSplitter& audioProcessor;
 
     
     RotarySliderWithLabels peakFreqSlider,
@@ -364,5 +364,5 @@ private:
     
     LookAndFeel lnf;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleEQAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HapticSplitterEditor)
 };

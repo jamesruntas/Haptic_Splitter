@@ -10,31 +10,30 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-SimpleEQAudioProcessor::SimpleEQAudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
+HapticSplitter::HapticSplitter()
      : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
+                       .withInput  ("Input1",  juce::AudioChannelSet::stereo(), true)
+                       .withInput  ("Input2", juce::AudioChannelSet::stereo(), true)
+                       .withInput  ("Input3", juce::AudioChannelSet::stereo(), true)
+                       .withInput  ("Input4", juce::AudioChannelSet::stereo(), true)
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
+                       .withOutput ("Output2", juce::AudioChannelSet::stereo(), true)
+                       .withOutput ("Output3", juce::AudioChannelSet::stereo(), true)
                        )
-#endif
 {
 }
 
-SimpleEQAudioProcessor::~SimpleEQAudioProcessor()
+HapticSplitter::~HapticSplitter()
 {
 }
 
 //==============================================================================
-const juce::String SimpleEQAudioProcessor::getName() const
+const juce::String HapticSplitter::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool SimpleEQAudioProcessor::acceptsMidi() const
+bool HapticSplitter::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -43,7 +42,7 @@ bool SimpleEQAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool SimpleEQAudioProcessor::producesMidi() const
+bool HapticSplitter::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -52,7 +51,7 @@ bool SimpleEQAudioProcessor::producesMidi() const
    #endif
 }
 
-bool SimpleEQAudioProcessor::isMidiEffect() const
+bool HapticSplitter::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -61,37 +60,37 @@ bool SimpleEQAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double SimpleEQAudioProcessor::getTailLengthSeconds() const
+double HapticSplitter::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int SimpleEQAudioProcessor::getNumPrograms()
+int HapticSplitter::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int SimpleEQAudioProcessor::getCurrentProgram()
+int HapticSplitter::getCurrentProgram()
 {
     return 0;
 }
 
-void SimpleEQAudioProcessor::setCurrentProgram (int index)
+void HapticSplitter::setCurrentProgram (int index)
 {
 }
 
-const juce::String SimpleEQAudioProcessor::getProgramName (int index)
+const juce::String HapticSplitter::getProgramName (int index)
 {
     return {};
 }
 
-void SimpleEQAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void HapticSplitter::changeProgramName (int index, const juce::String& newName)
 {
 }
 
 //==============================================================================
-void SimpleEQAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void HapticSplitter::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
@@ -119,14 +118,14 @@ void SimpleEQAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     osc.setFrequency(440);
 }
 
-void SimpleEQAudioProcessor::releaseResources()
+void HapticSplitter::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool SimpleEQAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool HapticSplitter::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     juce::ignoreUnused (layouts);
@@ -151,7 +150,7 @@ bool SimpleEQAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 }
 #endif
 
-void SimpleEQAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void HapticSplitter::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
@@ -195,19 +194,19 @@ void SimpleEQAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
 }
 
 //==============================================================================
-bool SimpleEQAudioProcessor::hasEditor() const
+bool HapticSplitter::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-juce::AudioProcessorEditor* SimpleEQAudioProcessor::createEditor()
+juce::AudioProcessorEditor* HapticSplitter::createEditor()
 {
-    return new SimpleEQAudioProcessorEditor (*this);
+    return new HapticSplitterEditor (*this);
 //    return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
-void SimpleEQAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void HapticSplitter::getStateInformation (juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
@@ -217,7 +216,7 @@ void SimpleEQAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     apvts.state.writeToStream(mos);
 }
 
-void SimpleEQAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void HapticSplitter::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -256,7 +255,7 @@ Coefficients makePeakFilter(const ChainSettings& chainSettings, double sampleRat
                                                                juce::Decibels::decibelsToGain(chainSettings.peakGainInDecibels));
 }
 
-void SimpleEQAudioProcessor::updatePeakFilter(const ChainSettings &chainSettings)
+void HapticSplitter::updatePeakFilter(const ChainSettings &chainSettings)
 {
     auto peakCoefficients = makePeakFilter(chainSettings, getSampleRate());
     
@@ -272,7 +271,7 @@ void updateCoefficients(Coefficients &old, const Coefficients &replacements)
     *old = *replacements;
 }
 
-void SimpleEQAudioProcessor::updateLowCutFilters(const ChainSettings &chainSettings)
+void HapticSplitter::updateLowCutFilters(const ChainSettings &chainSettings)
 {
     auto cutCoefficients = makeLowCutFilter(chainSettings, getSampleRate());
     auto& leftLowCut = leftChain.get<ChainPositions::LowCut>();
@@ -285,7 +284,7 @@ void SimpleEQAudioProcessor::updateLowCutFilters(const ChainSettings &chainSetti
     updateCutFilter(leftLowCut, cutCoefficients, chainSettings.lowCutSlope);
 }
 
-void SimpleEQAudioProcessor::updateHighCutFilters(const ChainSettings &chainSettings)
+void HapticSplitter::updateHighCutFilters(const ChainSettings &chainSettings)
 {
     auto highCutCoefficients = makeHighCutFilter(chainSettings, getSampleRate());
     
@@ -299,7 +298,7 @@ void SimpleEQAudioProcessor::updateHighCutFilters(const ChainSettings &chainSett
     updateCutFilter(rightHighCut, highCutCoefficients, chainSettings.highCutSlope);
 }
 
-void SimpleEQAudioProcessor::updateFilters()
+void HapticSplitter::updateFilters()
 {
     auto chainSettings = getChainSettings(apvts);
     
@@ -308,7 +307,7 @@ void SimpleEQAudioProcessor::updateFilters()
     updateHighCutFilters(chainSettings);
 }
 
-juce::AudioProcessorValueTreeState::ParameterLayout SimpleEQAudioProcessor::createParameterLayout()
+juce::AudioProcessorValueTreeState::ParameterLayout HapticSplitter::createParameterLayout()
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     
@@ -361,5 +360,5 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimpleEQAudioProcessor::crea
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new SimpleEQAudioProcessor();
+    return new HapticSplitter();
 }
